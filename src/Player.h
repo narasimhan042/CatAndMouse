@@ -10,7 +10,10 @@ private:
 
 public:
 	Player(SDL_Rect s, SDL_Rect d);
-
+	SDL_Point center; // pivot point of our mouse
+	int angle; // angle of mouse
+	int frame; // current frame
+	void animate(); // animates mouse
 	bool isMoving();
 	bool isPoweredUp();
 	bool isDead();

@@ -36,6 +36,7 @@ public:
 	void HandleEvents();
 	void PlayerGhostsInteractions();
 	void PlayerMovements();
+	void CatMovements();
 	void Clean();
 	void Wake();
 	void Sleep();
