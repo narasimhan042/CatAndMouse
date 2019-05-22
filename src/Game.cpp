@@ -123,28 +123,33 @@ void Game::PlayerGhostsInteractions() {
 		}
 	}
 
-	// Handles player eating a power up
+	// Handles player eating a mystery cheese
 	if (m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].isPowerUp() && !m_pPlayer->isMoving()) {
 		m_pPlayer->SetPowered(true);
+		// Change tile to a normal blank tile with its associated variables
 		m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].SetSrc('B');
 		m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].SetTileVariables('B');
 
 		m_powerUpStartTimer = SDL_GetTicks();
 
+		// Make cats vulnerable
 		for (int i = 0; i < 4; i++) {
 			m_pCats[i]->SetVulnerable(true);
 		}
 	}
 
-	// Handles player eating a ghost
+	// Handles player eating a cat
 	for (int i = 0; i < 4; i++) {
+		// If player collides with cat..
 		if (SDL_HasIntersection(m_pPlayer->GetDstP(), m_pCats[i]->GetDstP()) && !m_pPlayer->isMoving()) {
+			// Destroy cat if powered up
 			if (!m_pCats[i]->isDead())
 			{
 				if (m_pPlayer->isPoweredUp())
 				{
 					m_pCats[i]->Die();
 				}
+				// Else player dies
 				else
 				{
 					m_pPlayer->Die();
@@ -159,6 +164,7 @@ void Game::PlayerGhostsInteractions() {
 void Game::PlayerMovements() {
 	// Player eating a pellet
 	if (m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].isPoint() && !m_pPlayer->isMoving()) {
+		// Change tile to a normal blank tile with its associated variables
 		m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].SetSrc('B');
 		m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].SetTileVariables('B');
 	}
@@ -200,6 +206,7 @@ void Game::PlayerMovements() {
 		}
 	}
 
+	// Moves player to target location
 	if (m_pPlayer->isMoving()) {
 		// animate player if moving
 		m_pPlayer->animate();

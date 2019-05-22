@@ -8,6 +8,10 @@
 
 class Game {
 private:
+	Game();
+	~Game() {};
+
+	// Game Engine Variables
 	bool m_bRunning;
 	const Uint8* m_iKeyStates;
 	Uint32 m_start, m_end, m_delta, m_fps, m_powerUpStartTimer;
@@ -16,19 +20,21 @@ private:
 	SDL_Texture* m_pTileTexture;
 	SDL_Texture* m_pPlayerTexture;
 	SDL_Texture* m_pGhostsTexture;
+
+	// Game Object Variables
 	Player* m_pPlayer; // Point to Player object
 	Cat* m_pCats[4];
-	SDL_Rect m_rBox = { 100, 100, 100, 100 };
-	SDL_Rect m_rIntersect;
 
+	// Game Variables
 	int m_currLevel = 0;
-
-public:
 	Level m_level;
 
-	Game();
-	~Game() {};
-
+public:
+	static Game* GetInstance() {
+		static Game* instance = new Game();
+		return instance;
+	}
+	
 	bool Init(const char* title, int xpos, int ypos, int width, int height, int flags);
 	bool Running() { return m_bRunning; }
 	void Update();
