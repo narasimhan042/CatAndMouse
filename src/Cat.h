@@ -8,10 +8,10 @@ private:
 	int m_IDestinationX, m_IDestinationY;
 	char dir;
 	int m_iTargetX, m_iTargetY;
+	
 
 public:
 	Cat(SDL_Rect s, SDL_Rect d);
-
 	bool isVulnerable();
 	bool isDead();
 	bool isMoving();
@@ -34,4 +34,8 @@ public:
 
 	void SetVulnerable(bool b);
 	void Die();
+	int frame;
+	int frameX;
+	int angle;
+	SDL_Point center;
 };

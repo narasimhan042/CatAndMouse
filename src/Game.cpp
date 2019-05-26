@@ -28,9 +28,9 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
 
 				if (IMG_Init(IMG_INIT_PNG) != 0) {
 					// Create pixel maps.
-					SDL_Surface* tileSurface = IMG_Load("../Assets/textures/Tiles.png");
-					SDL_Surface* playerSurface = IMG_Load("../Assets/textures/mouse.png");
-					SDL_Surface* ghostsSurface = IMG_Load("../Assets/textures/Cats.png");
+					SDL_Surface* tileSurface = IMG_Load("Assets/textures/Tiles.png");
+					SDL_Surface* playerSurface = IMG_Load("Assets/textures/mouse.png");
+					SDL_Surface* ghostsSurface = IMG_Load("Assets/textures/Cats.png");
 					m_pTileTexture = SDL_CreateTextureFromSurface(m_pRenderer, tileSurface);
 					m_pPlayerTexture = SDL_CreateTextureFromSurface(m_pRenderer, playerSurface);
 					m_pGhostsTexture = SDL_CreateTextureFromSurface(m_pRenderer, ghostsSurface);
@@ -57,28 +57,39 @@ bool Game::Init(const char* title, int xpos, int ypos, int width, int height, in
 		std::cout << "SDL init fail!" << std::endl;
 		return false; // SDL init fail
 	}
-
+	// build background layer
+	std::ifstream bgFile("Assets/bg.txt");
+	for (int row = 0; row < ROWS; row++) {
+		for (int col = 0; col < COLS; col++) {
+			char i;
+			bgFile >> i;
+			m_bg.m_Map[row][col].SetSrc(i);
+			m_bg.m_Map[row][col].SetTileVariables(i);
+			m_bg.m_Map[row][col].SetDst({ 32 * col, 32 * row, 32, 32 });
+		}
+	}
+	bgFile.close();
 	// Build tilemap
-	std::ifstream inFile("../Assets/Level0.txt");
+	std::ifstream mapFile("Assets/Level0.txt");
 	for (int row = 0; row < ROWS; row++) {
 		for (int col = 0; col < COLS; col++) {
 			char temp;
-			inFile >> temp;
+			mapFile >> temp;
 			m_level.m_Map[row][col].SetSrc(temp);
 			m_level.m_Map[row][col].SetTileVariables(temp);
 			m_level.m_Map[row][col].SetDst({ 32 * col, 32 * row, 32, 32 });
 		}
 	}
-	inFile.close();
+	mapFile.close();
 
 	m_iKeyStates = SDL_GetKeyboardState(NULL);
 	// Spawn Player and Ghosts
 	// Starting coordinate: 15, 17
 	m_pPlayer = new Player({ 0, 0, 32, 32 }, { 32 * 15, 32 * 17, 32, 32 });
 	m_pCats[0] = new Cat({ 0, 0, 32, 32 }, { 32 * 14, 32 * 15, 32, 32 });
-	m_pCats[1] = new Cat({ 32, 0, 32, 32 }, { 32 * 15, 32 * 15, 32, 32 });
-	m_pCats[2] = new Cat({ 64, 0, 32, 32 }, { 32 * 16, 32 * 15, 32, 32 });
-	m_pCats[3] = new Cat({ 96, 0, 32, 32 }, { 32 * 10, 32 * 8, 32, 32 });
+	m_pCats[1] = new Cat({ 96, 0, 32, 32 }, { 32 * 15, 32 * 15, 32, 32 });
+	m_pCats[2] = new Cat({ 192, 0, 32, 32 }, { 32 * 16, 32 * 15, 32, 32 });
+	m_pCats[3] = new Cat({ 288, 0, 32, 32 }, { 32 * 10, 32 * 8, 32, 32 });
 	m_bRunning = true;
 	return true;
 }
@@ -398,11 +409,19 @@ void Game::CatMovements()
 		}
 
 	}
+		
 }
 
 void Game::Render() {
 	SDL_SetRenderDrawColor(m_pRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(m_pRenderer);
+	// draw background tile map
+	for (int row = 0; row < ROWS; row++)
+	{
+		for (int col = 0; col < COLS; col++) {
+			SDL_RenderCopy(m_pRenderer, m_pTileTexture, m_bg.m_Map[row][col].GetSrcP(), m_bg.m_Map[row][col].GetDstP());
+		}
+	}
 	// Render map
 	for (int row = 0; row < ROWS; row++) {
 		for (int col = 0; col < COLS; col++) {
@@ -412,7 +431,7 @@ void Game::Render() {
 
 	// Render ghosts
 	for (int i = 0; i < 4; i++) {
-		SDL_RenderCopy(m_pRenderer, m_pGhostsTexture, m_pCats[i]->GetSrcP(), m_pCats[i]->GetDstP());
+		SDL_RenderCopyEx(m_pRenderer, m_pGhostsTexture, m_pCats[i]->GetSrcP(), m_pCats[i]->GetDstP(),m_pCats[i]->angle,&m_pCats[i]->center,SDL_FLIP_NONE);
 	}
 
 	// Render player

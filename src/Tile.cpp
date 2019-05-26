@@ -11,13 +11,13 @@ bool Tile::isPowerUp() { return m_bIsPowerUp; }
 bool Tile::isIntersection() { return m_bIsIntersection; }
 
 void Tile::SetTileVariables(char c) {
-	if (c == 'B') { // Black Tile
+	if (c == 'B') { // No Tile
 		m_bIsObstacle = false;
 		m_bIsPoint = false;
 		m_bIsPowerUp = false;
 		m_bIsIntersection = false;
 	}
-	else if (c == 'A') { // Blue Tile
+	else if (c == 'A') { // brick tile
 		m_bIsObstacle = true;
 		m_bIsPoint = false;
 		m_bIsPowerUp = false;
@@ -46,5 +46,15 @@ void Tile::SetTileVariables(char c) {
 		m_bIsPoint = false;
 		m_bIsPowerUp = false;
 		m_bIsIntersection = true;
+	}
+	else if(c=='d') // default indoor tile
+	{
+		m_bIsObstacle = true;
+		m_bIsPoint = false;
+		m_bIsPowerUp = false;
+		m_bIsIntersection = false;
+		m_rSrc.x = 96;
+		m_rSrc.y = 0;
+		m_rSrc.w = m_rSrc.h = 32;
 	}
 }

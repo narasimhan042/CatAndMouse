@@ -17,6 +17,7 @@ private:
 	Uint32 m_start, m_end, m_delta, m_fps, m_powerUpStartTimer;
 	SDL_Window* m_pWindow;
 	SDL_Renderer* m_pRenderer;
+	
 	SDL_Texture* m_pTileTexture;
 	SDL_Texture* m_pPlayerTexture;
 	SDL_Texture* m_pGhostsTexture;
@@ -28,6 +29,9 @@ private:
 	// Game Variables
 	int m_currLevel = 0;
 	Level m_level;
+	Level m_bg;
+	
+	
 
 public:
 	static Game* GetInstance() {

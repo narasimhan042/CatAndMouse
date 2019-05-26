@@ -21,6 +21,10 @@ void Sprite::SetSrc(char c) {
 		m_rSrc = { 32,0,32,32 };
 	else if (c == 'P' || c == 'I') // Pellet Tile
 		m_rSrc = { 64,0,32,32 };
+	else
+	{
+		m_rSrc = { 96,0,32,32 };
+	}
 }
 
 void Sprite::SetSrc(SDL_Rect src) {
