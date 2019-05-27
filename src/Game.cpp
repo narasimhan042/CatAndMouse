@@ -174,69 +174,64 @@ void Game::PlayerGhostsInteractions() {
 // Tile based movement with obstacle detection
 void Game::PlayerMovements() {
 	// Player eating a pellet
-	if (m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].isPoint() && !m_pPlayer->isMoving()) {
+	if (m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].isPoint())
+	{
 		// Change tile to a normal blank tile with its associated variables
 		m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].SetSrc('B');
 		m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX()].SetTileVariables('B');
 	}
 
-	// Player movement input handling
-	if (!m_pPlayer->isDead() && !m_pPlayer->isMoving()) {
-		if (KeyDown(SDL_SCANCODE_W)) {
-			if (!m_level.m_Map[m_pPlayer->GetY() - 1][m_pPlayer->GetX()].isObstacle()) {
-				m_pPlayer->angle = 0;
-				m_pPlayer->SetDestinationY(m_pPlayer->GetDst().y - 32);
-				m_pPlayer->SetDestinationX(m_pPlayer->GetDst().x);
-				m_pPlayer->SetMoving(true);
-			}
-		}
-		else if (KeyDown(SDL_SCANCODE_S)) {
-			if (!m_level.m_Map[m_pPlayer->GetY() + 1][m_pPlayer->GetX()].isObstacle()) {
-				m_pPlayer->angle = 180;
-				m_pPlayer->SetDestinationY(m_pPlayer->GetDst().y + 32);
-				m_pPlayer->SetDestinationX(m_pPlayer->GetDst().x);
-				m_pPlayer->SetMoving(true);
-			}
-		}
-		else if (KeyDown(SDL_SCANCODE_A)) {
-			if (!m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX() - 1].isObstacle())
+
+
+	//player movement input handling
+
+	if (!m_pPlayer->isDead())
+	{
+		if (KeyDown(SDL_SCANCODE_W))
+		{
+			if (!m_level.m_Map[m_pPlayer->GetBottomEdgeTile()-1][m_pPlayer->GetRightEdgeTile()].isObstacle() && 
+				!m_level.m_Map[m_pPlayer->GetBottomEdgeTile() - 1][m_pPlayer->GetLeftEdgeTile()].isObstacle()) //check that the right and left are clear for the character to move up
 			{
-				m_pPlayer->angle = 270;
-				m_pPlayer->SetDestinationX(m_pPlayer->GetDst().x - 32);
-				m_pPlayer->SetDestinationY(m_pPlayer->GetDst().y);
-				m_pPlayer->SetMoving(true);
+
+				m_pPlayer->MoveUp();
 			}
 		}
-		else if (KeyDown(SDL_SCANCODE_D)) {
-			if (!m_level.m_Map[m_pPlayer->GetY()][m_pPlayer->GetX() + 1].isObstacle()) {
-				m_pPlayer->angle = 90;
-				m_pPlayer->SetDestinationX(m_pPlayer->GetDst().x + 32);
-				m_pPlayer->SetDestinationY(m_pPlayer->GetDst().y);
-				m_pPlayer->SetMoving(true);
+		else if (KeyDown(SDL_SCANCODE_S)) 
+		{
+			if (!m_level.m_Map[m_pPlayer->GetTopEdgeTile()+ 1][m_pPlayer->GetRightEdgeTile()].isObstacle() && 
+				!m_level.m_Map[m_pPlayer->GetTopEdgeTile() + 1][m_pPlayer->GetLeftEdgeTile()].isObstacle()) //check that the right and left are clear for the character to move down
+			{
+
+				m_pPlayer->MoveDown();
 			}
 		}
+		if (KeyDown(SDL_SCANCODE_A)) 
+		{
+			if (!m_level.m_Map[m_pPlayer->GetBottomEdgeTile()][m_pPlayer->GetRightEdgeTile() - 1].isObstacle() && 
+				!m_level.m_Map[m_pPlayer->GetTopEdgeTile()][m_pPlayer->GetRightEdgeTile() - 1].isObstacle())
+			{
+
+				m_pPlayer->MoveLeft();
+			}
+		}
+		else if (KeyDown(SDL_SCANCODE_D))
+		{
+			if (!m_level.m_Map[m_pPlayer->GetBottomEdgeTile()][m_pPlayer->GetLeftEdgeTile() + 1].isObstacle() &&
+				!m_level.m_Map[m_pPlayer->GetTopEdgeTile()][m_pPlayer->GetLeftEdgeTile() + 1].isObstacle())
+			{
+				
+
+				m_pPlayer->MoveRight();
+			}
+		}
+		else if (KeyDown(SDL_SCANCODE_ESCAPE))
+		{
+			m_bRunning = false;
+		}
+		
 	}
 
-	// Moves player to target location
-	if (m_pPlayer->isMoving()) {
-		// animate player if moving
-		m_pPlayer->animate();
-		if (m_pPlayer->GetDestinationX() > m_pPlayer->GetDst().x) {
-			m_pPlayer->MoveX(1);
-		}
-		else if (m_pPlayer->GetDestinationX() < m_pPlayer->GetDst().x) {
-			m_pPlayer->MoveX(-1);
-		}
-		else if (m_pPlayer->GetDestinationY() > m_pPlayer->GetDst().y) {
-			m_pPlayer->MoveY(1);
-		}
-		else if (m_pPlayer->GetDestinationY() < m_pPlayer->GetDst().y) {
-			m_pPlayer->MoveY(-1);
-		}
-		else if (m_pPlayer->GetDestinationX() == m_pPlayer->GetDst().x && m_pPlayer->GetDestinationY() == m_pPlayer->GetDst().y) {
-			m_pPlayer->SetMoving(false);
-		}
-	}
+	m_pPlayer->animate();
 }
 
 void Game::CatMovements()
