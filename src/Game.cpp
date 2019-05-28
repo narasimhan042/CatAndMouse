@@ -95,6 +95,16 @@ bool Game::KeyDown(SDL_Scancode c) {
 	return false;
 }
 
+Level* Game::GetLevel()
+{
+	return &m_level;
+}
+
+Player* Game::GetPlayer()
+{
+	return m_pPlayer;
+}
+
 void Game::Update() {
 	PlayerGhostsInteractions();
 	PlayerMovements();
@@ -230,174 +240,10 @@ void Game::PlayerMovements() {
 
 void Game::CatMovements()
 {
-	int CATINDEX = 3;
-	int distance = 99999;
-	int temp = 0;
-	// Check if the square cat is on is an intersection
-	if (m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX()].isIntersection())
-	{
-		// if north is not an obstacle and if the direction is the opposite of the checking direction to prevent U-turn
-		if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() - 1][m_pCats[CATINDEX]->GetX()].isObstacle() && m_pCats[CATINDEX]->getDir() != 's')
-		{
-			temp = 0;// reseting and checking the distance
-			temp += (m_pPlayer->GetX() - m_pCats[CATINDEX]->GetX())*(m_pPlayer->GetX() - m_pCats[CATINDEX]->GetX());
-			temp += (m_pPlayer->GetY() - (m_pCats[CATINDEX]->GetY() - 1))*(m_pPlayer->GetY() - (m_pCats[CATINDEX]->GetY() - 1));
-			if (distance > temp)
-			{
-				distance = temp;
-				m_pCats[CATINDEX]->setDir('w');
-			}
-		}
-		// if east is not an obstacle and if the direction is the opposite of the checking direction to prevent U-turn
-		if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() + 1].isObstacle() && m_pCats[CATINDEX]->getDir() != 'a')
-		{
-			temp = 0;
-			temp += (m_pPlayer->GetX() - (m_pCats[CATINDEX]->GetX() + 1))*(m_pPlayer->GetX() - (m_pCats[CATINDEX]->GetX() + 1));
-			temp += (m_pPlayer->GetY() - m_pCats[CATINDEX]->GetY())*(m_pPlayer->GetY() - m_pCats[CATINDEX]->GetY());
-			if (distance > temp)
-			{
-				distance = temp;
-				m_pCats[CATINDEX]->setDir('d');
-			}
-		}
-		// if south is not an obstacle and if the direction is the opposite of the checking direction to prevent U-turn
-		if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() + 1][m_pCats[CATINDEX]->GetX()].isObstacle() && m_pCats[CATINDEX]->getDir() != 'w')
-		{
-			temp = 0;
-			temp += (m_pPlayer->GetX() - m_pCats[CATINDEX]->GetX())*(m_pPlayer->GetX() - m_pCats[CATINDEX]->GetX());
-			temp += (m_pPlayer->GetY() - (m_pCats[CATINDEX]->GetY() + 1))*(m_pPlayer->GetY() - (m_pCats[CATINDEX]->GetY() + 1));
-			if (distance > temp)
-			{
-				distance = temp;
-				m_pCats[CATINDEX]->setDir('s');
-			}
-		}
-		// if west is not an obstacle and if the direction is the opposite of the checking direction to prevent U-turn
-		if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() - 1].isObstacle() && m_pCats[CATINDEX]->getDir() != 'd')
-		{
-			temp = 0;
-			temp += (m_pPlayer->GetX() - (m_pCats[CATINDEX]->GetX() - 1))*(m_pPlayer->GetX() - (m_pCats[CATINDEX]->GetX() - 1));
-			temp += (m_pPlayer->GetY() - m_pCats[CATINDEX]->GetY())*(m_pPlayer->GetY() - m_pCats[CATINDEX]->GetY());
-			if (distance > temp)
-			{
-				distance = temp;
-				m_pCats[CATINDEX]->setDir('a');
-			}
-		}
-	}
-	// if not moving then move in a direction
-	if (!m_pCats[CATINDEX]->isDead() && !m_pCats[CATINDEX]->isMoving()) {
-		if (m_pCats[CATINDEX]->getDir() == 'w') {
-			// If not an obstacle then sets the new destination square
-			if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() - 1][m_pCats[CATINDEX]->GetX()].isObstacle()) {
-				m_pCats[CATINDEX]->SetDestinationY(m_pCats[CATINDEX]->GetDst().y - 32);
-				m_pCats[CATINDEX]->SetDestinationX(m_pCats[CATINDEX]->GetDst().x);
-				m_pCats[CATINDEX]->SetMoving(true);
-			}
-			else // if Obstacle it will check for another route
-			{
-				if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() + 1].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('d');
-				}
-				else if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() - 1].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('a');
-				}
-				else
-				{
-					m_pCats[CATINDEX]->setDir('s');
-				}
-			}
-		}
-		else if (m_pCats[CATINDEX]->getDir() == 's') {
-			if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() + 1][m_pCats[CATINDEX]->GetX()].isObstacle()) {
-				m_pCats[CATINDEX]->SetDestinationY(m_pCats[CATINDEX]->GetDst().y + 32);
-				m_pCats[CATINDEX]->SetDestinationX(m_pCats[CATINDEX]->GetDst().x);
-				m_pCats[CATINDEX]->SetMoving(true);
-			}
-			else
-			{
-				if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() - 1].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('a');
-				}
-				else if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() + 1].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('d');
-				}
-				else
-				{
-					m_pCats[CATINDEX]->setDir('w');
-				}
-			}
-		}
-		else if (m_pCats[CATINDEX]->getDir() == 'a') {
-			if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() - 1].isObstacle())
-			{
-				m_pCats[CATINDEX]->SetDestinationX(m_pCats[CATINDEX]->GetDst().x - 32);
-				m_pCats[CATINDEX]->SetDestinationY(m_pCats[CATINDEX]->GetDst().y);
-				m_pCats[CATINDEX]->SetMoving(true);
-			}
-			else
-			{
-				if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() - 1][m_pCats[CATINDEX]->GetX()].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('w');
-				}
-				else if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() + 1][m_pCats[CATINDEX]->GetX()].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('s');
-				}
-				else
-				{
-					m_pCats[CATINDEX]->setDir('d');
-				}
-			}
-		}
-		else if (m_pCats[CATINDEX]->getDir() == 'd') {
-			if (!m_level.m_Map[m_pCats[CATINDEX]->GetY()][m_pCats[CATINDEX]->GetX() + 1].isObstacle()) {
-				m_pCats[CATINDEX]->SetDestinationX(m_pCats[CATINDEX]->GetDst().x + 32);
-				m_pCats[CATINDEX]->SetDestinationY(m_pCats[CATINDEX]->GetDst().y);
-				m_pCats[CATINDEX]->SetMoving(true);
-			}
-			else
-			{
-				if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() - 1][m_pCats[CATINDEX]->GetX()].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('w');
-				}
-				else if (!m_level.m_Map[m_pCats[CATINDEX]->GetY() + 1][m_pCats[CATINDEX]->GetX()].isObstacle())
-				{
-					m_pCats[CATINDEX]->setDir('s');
-				}
-				else
-				{
-					m_pCats[CATINDEX]->setDir('a');
-				}
-			}
-		}
-	}
-	// if moving continue moving till
-	if (m_pCats[CATINDEX]->isMoving()) {
-		if (m_pCats[CATINDEX]->GetDestinationX() > m_pCats[CATINDEX]->GetDst().x) {
-			m_pCats[CATINDEX]->MoveX(1);
-		}
-		else if (m_pCats[CATINDEX]->GetDestinationX() < m_pCats[CATINDEX]->GetDst().x) {
-			m_pCats[CATINDEX]->MoveX(-1);
-		}
-		else if (m_pCats[CATINDEX]->GetDestinationY() > m_pCats[CATINDEX]->GetDst().y) {
-			m_pCats[CATINDEX]->MoveY(1);
-		}
-		else if (m_pCats[CATINDEX]->GetDestinationY() < m_pCats[CATINDEX]->GetDst().y) {
-			m_pCats[CATINDEX]->MoveY(-1);
-		}
-		// if cat has gotten to destination then set moving to false
-		else if (m_pCats[CATINDEX]->GetDestinationX() == m_pCats[CATINDEX]->GetDst().x && m_pCats[CATINDEX]->GetDestinationY() == m_pCats[CATINDEX]->GetDst().y) {
-			m_pCats[CATINDEX]->SetMoving(false);
-		}
-
-	}
+	m_pCats[0]->Seek();
+	m_pCats[1]->Seek();
+	m_pCats[2]->Seek();
+	m_pCats[3]->Seek();
 }
 
 void Game::Render() {

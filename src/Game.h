@@ -47,4 +47,6 @@ public:
 	void Wake();
 	void Sleep();
 	bool KeyDown(SDL_Scancode c);
+	Level* GetLevel();
+	Player * GetPlayer();
 };
